@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.itcast.usermanage.mapper.UserMapper">
+	
+	<!-- 定义一个sql片段 -->
+	<sql id="userColumns">
+		id,user_name,password,name,age,sex,birthday,note,created,updated
+	</sql>
+	
+	<!-- 根据id查询用户 -->
+	<select id="queryById" parameterType="Long" resultType="User">
+		SELECT <include refid="userColumns"/> 
+		FROM tb_user WHERE id = #{id};
+	</select>
+	
+	<!-- 查询所有用户 -->
+	<select id="queryAll" resultType="User">
+		SELECT <include refid="userColumns"/> FROM tb_user
+	</select>
+	
+	<!-- 查询总条数 -->
+	<select id="queryCount"  resultType="Long">
+		SELECT count(*) FROM tb_user
+	</select>
+	
+	<!-- 查询分页数据 -->
+	<select id="queryPage"  resultType="User">
+		SELECT <include refid="userColumns"/> 
+		FROM tb_user limit #{start},#{rows}
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="save" parameterType="User">
+		INSERT INTO tb_user ( 
+			<include refid="userColumns"/> 
+		  )
+		VALUES
+		  ( 
+			NULL,
+			#{userName},
+		    #{password},
+		    #{name}, 
+		    #{age},
+		    #{sex}, 
+		    #{birthday},
+		    #{note},
+			NOW(),
+		 	NOW()
+		  );
+	</insert>
+	
+	<!-- 删除用户 -->
+	<delete id="delete">
+		DELETE FROM tb_user WHERE id IN
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 修改用户 -->
+	<update id="update">
+		UPDATE tb_user 
+		<set>
+			<if test="userName != null and userName.trim() != null">
+				user_name = #{userName},
+			</if> 
+			<if test="password != null and password.trim() != null">
+				password = #{password}, 
+			</if> 
+			<if test="name != null and name.trim() != null">
+				name = #{name}, 
+			</if> 
+			<if test="age != null">
+				age = #{age}, 
+			</if> 
+			<if test="sex != null">
+				sex = #{sex}, 
+			</if> 
+			<if test="note != null">
+				note = #{note}, 
+			</if> 
+			<if test="birthday != null">
+				birthday = #{birthday}, 
+			</if> 
+		</set>
+		WHERE 
+			id = #{id};
+	</update>
+</mapper>
+

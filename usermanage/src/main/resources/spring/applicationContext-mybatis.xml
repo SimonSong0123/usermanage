@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<!-- 配置SqlSessionFactory，通过工厂Bean来创建 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 指定连接池信息 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 指定mybatis全局配置文件位置 -->
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+		<!-- 指定别名包 -->
+		<property name="typeAliasesPackage" value="cn.itcast.usermanage.pojo"></property>
+		<!-- 配置*Mapper文件所在位置 -->
+		<property name="mapperLocations" value="classpath:mybatis/mappers/*Mapper.xml"></property>
+	</bean>
+
+	<!-- 通过Mapper的工厂Bean来自动创建Mapper对象 -->
+	<!-- <bean class="org.mybatis.spring.mapper.MapperFactoryBean">
+		指定sqlSessionFactory
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+		指定Mapper的接口
+		<property name="mapperInterface" value="cn.itcast.usermanage.mapper.UserMapper"/>
+	</bean> -->
+	<!-- 配置扫描Mapper包，来实现Mapper的依赖注入 
+		注意：这里无需指定SqlSessionFactory了，Spring会自动扫描查找SqlSessionFactory
+	-->
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="cn.itcast.usermanage.mapper"/>
+	</bean>
+	
+	
+</beans>
